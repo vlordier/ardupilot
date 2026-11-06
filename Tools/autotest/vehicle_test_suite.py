@@ -8255,8 +8255,15 @@ class TestSuite(abc.ABC):
             terrain = self.assert_receive_message('TERRAIN_REPORT')
             return terrain.current_height
 
-        (msg, field) = altitude_source.split('.')
-        msg = self.poll_message(msg, quiet=True)
+        (message_type, field) = altitude_source.split('.')
+        if message_type == 'SIM_STATE':
+            msg = self.poll_message(message_type, quiet=True)
+        else:
+            # Use passive receive for continuously-broadcast messages.
+            # poll_message sends MAV_CMD_REQUEST_MESSAGE which can fail
+            # after certain reboots (e.g. EKF parameter changes) when
+            # the MAVLink stream is still stabilising.
+            msg = self.assert_receive_message(message_type, timeout=timeout)
         divisor = 1000.0  # mm is pretty common in mavlink
         if altitude_source == "SIM_STATE.alt":
             divisor = 1.0
