@@ -4483,7 +4483,7 @@ class AutoTestCopter(vehicle_test_suite.TestSuite):
         for _ in range(20):
             m = self.assert_receive_message('ATTITUDE')
             baseline_headings.append(math.degrees(m.yaw))
-            self.delay_sim_time(0.25)
+            self.delay_sim_time(0.25, reason="sample baseline yaw")
         baseline_mean = sum(baseline_headings) / len(baseline_headings)
         baseline_std = (sum((h - baseline_mean)**2 for h in baseline_headings) / len(baseline_headings))**0.5
         self.progress("Baseline yaw std: %.2f deg (mean=%.1f)" % (baseline_std, baseline_mean))
@@ -4521,7 +4521,7 @@ class AutoTestCopter(vehicle_test_suite.TestSuite):
                 heading = math.degrees(m.yaw)
                 degraded_headings.append(heading)
                 degraded_timestamps.append(self.get_sim_time_cached())
-                self.delay_sim_time(0.25)
+                self.delay_sim_time(0.25, reason="sample degraded yaw")
 
         # Check: during compass freeze, EKF yaw should not track the commanded
         # turns perfectly — it should lag or drift. The yaw rate during turns
@@ -4556,7 +4556,7 @@ class AutoTestCopter(vehicle_test_suite.TestSuite):
             m = self.assert_receive_message('ATTITUDE')
             heading = math.degrees(m.yaw)
             recovery_headings.append(heading)
-            self.delay_sim_time(0.5)
+            self.delay_sim_time(0.5, reason="sample recovery yaw")
 
         # Check recovery: heading should return to within 30 degrees of start
         # (allowing for some drift during the degradation period)
@@ -20432,6 +20432,7 @@ class AutoTestCopter(vehicle_test_suite.TestSuite):
             self.TakeoffCheck,
             self.MaxAltFenceAvoid,
             self.GPSGlitchLoiter2,
+            self.EKF3CompassDegradation,
             self.SuperSimpleCircle,
             self.MagFail,
             self.LoiterNoCompassYaw,
