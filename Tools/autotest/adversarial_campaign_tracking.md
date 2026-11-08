@@ -904,8 +904,9 @@ These 5 failures represent real implementation gaps worth investigating.
 | 33 | 1 | 1 | 67 | 8515 | 333 |
 | 34 | 1 | 1 | 67 | 8582 | 333 |
 | 35 | 1 | 1 | 40 | 8622 | 333 |
+| 36 | 4 | 4 | 173 | 8799 | 333 |
 
-**Total**: ~134 modules attacked, ~6,206 adversarial tests added, 8622 passing, 333 known failures
+**Total**: ~138 modules attacked, ~6,379 adversarial tests added, 8799 passing, 333 known failures
 
 **Critical bugs exposed**:
 - BatteryStatus.remaining_pct accepts negative values
@@ -918,6 +919,8 @@ These 5 failures represent real implementation gaps worth investigating.
 - **ground_effect_compensation**: takeoff/touchdown hold duration only disables ground effect when above max_effect_altitude; within zone, stays ON forever
 - **ground_effect_compensation**: NAN.max(0.0) = NAN in Rust (not 0.0), NaN altitude bypasses ground effect
 - **ground_effect_compensation**: ground_effect_multiplier > 1.0 or < 0.0 accepted without validation
+- **gripper_release_on_thrust_loss**: NaN thrust passes through f32::clamp (Rust 1.76+) without being clamped, leading to undefined engine_status computation
+- **rover_sprayer**: NaN speed input to pump_output() returns min_pump (correct via max(0, NaN)=0), but update() same behavior
 
 **Remaining unprotected modules**: ~7 modules (see remaining tasks T740-T769)
 
