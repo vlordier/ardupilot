@@ -91,6 +91,13 @@ void JSON::set_interface_ports(const char* address, const int port_in, const int
     sock.set_blocking(false);
     sock.reuseaddress();
 
+    // Bind to the input port so we receive sensor data from the FDM
+    if (!sock.bind("127.0.0.1", port_in)) {
+        printf("WARNING: JSON failed to bind to port %d: %s\n", port_in, strerror(errno));
+    } else {
+        printf("JSON sensor input bound to 127.0.0.1:%d\n", port_in);
+    }
+
     if (strcmp("127.0.0.1",address) != 0) {
         target_ip = address;
     }
@@ -303,8 +310,15 @@ uint64_t JSON::parse_sensors(const char *json)
 void JSON::recv_fdm(const struct sitl_input &input)
 {
     // Receive sensor packet
+    static int recv_count = 0;
     ssize_t ret = sock.recv(&sensor_buffer[sensor_buffer_len], sizeof(sensor_buffer)-sensor_buffer_len, UDP_TIMEOUT_MS);
     uint32_t wait_ms = UDP_TIMEOUT_MS;
+    if (recv_count < 3)
+    {
+        ::printf("DEBUG JSON recv n=%d ret=%zd errno=%d\n", recv_count, ret, errno);
+        recv_count++;
+    }
+    recv_count++;
 
     if (state.no_lockstep && ret <= 0) {
         // in no_lockstep mode do not block waiting for data; advance time using SITL loop rate

@@ -465,6 +465,7 @@ bool SOCKET_CLASS_NAME::reuseaddress(void) const
         return false;
     }
     int one = 1;
+    IGNORE_RETURN(CALL_PREFIX(setsockopt)(fd, SOL_SOCKET, SO_REUSEPORT, &one, sizeof(one)));
     return (CALL_PREFIX(setsockopt)(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)) != -1);
 }
 
