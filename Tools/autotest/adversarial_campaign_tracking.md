@@ -921,8 +921,9 @@ These 5 failures represent real implementation gaps worth investigating.
 | 50 | 1 | 0 | 55 | 9621 | 373 |
 | 51 | 1 | 0 | 49 | 9670 | 373 |
 | 52 | 1 | 0 | 54 | 9724 | 373 |
+| 53 | 1 | 0 | 52 | 9776 | 373 |
 
-**Total**: ~164 modules attacked, ~7,282 adversarial tests added, 9724 passing, 373 known failures
+**Total**: ~165 modules attacked, ~7,334 adversarial tests added, 9776 passing, 373 known failures
 
 **Critical bugs exposed**:
 - BatteryStatus.remaining_pct accepts negative values
