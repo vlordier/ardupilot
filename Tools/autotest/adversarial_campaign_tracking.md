@@ -803,6 +803,68 @@ These 5 failures represent real implementation gaps worth investigating.
 
 ---
 
+## Wave 14 (T762-T769): CRSF / Terrain Awareness / Takeoff RPM / Gripper / Frame Executor
+
+### Modules attacked (5)
+
+1. **crsf** (36 tests)
+   - CrsfFailsafe: default, as_str variants
+   - CrsfVersion: default, as_str variants
+   - CrsfLinkStats: default, max values, zero values
+   - CrsfRcFrame: channel access, has_real_data, 18-channel count
+   - CrsfParser: connected/disconnected, START byte, invalid bytes, 100k bytes, buffer overflow, reset
+   - Frame types: uniqueness, baudrate, max frame size, addresses
+   - Serialization: CrsfVersion, CrsfFailsafe
+
+2. **terrain_awareness** (51 tests)
+   - TerrainAlert: default, all levels, distinctness
+   - AxisTerrain: negative clearance, zero, large, no data, is_warning, is_alert, is_critical, NaN, negative altitude, f32::MAX
+   - WaypointTerrainCheck: clear, critical, large index, negative clearance, safe field
+   - StubTerrainDB: zero, large (Everest), constant, negative (Dead Sea), f32::MAX, f32::MIN
+   - GridTerrainDB: empty, add cell, poles, negative elev, 1000 cells, get_elevation (with/off-grid/duplicate/bounds)
+   - TerrainAwareness: new, update_vehicle, check_waypoint, check_waypoints (empty/1000), check_mission_path, thresholds, look_ahead, min_clearance, summary, clearance, alert, serialization
+
+3. **takeoff_rpm_check** (35 tests)
+   - RpmCheckResult: is_accepted, denial_reason, denial text
+   - TakeoffRpmConfig: default, min > max, zero min/max/arm, f32::MAX, clone
+   - MotorRpmData: uniform, zeros, negative, large spread, single motor, u16::MAX, f32::MAX, NaN, different motors
+   - TakeoffRpmController: new, update with/without telemetry, check_cached, takeoff_allowed modes, last_result, rpm_data, reset, esc_telemetry toggle, 100 updates, too_low, accept, zero data
+
+4. **gripper** (44 tests)
+   - GripperHWType: all variants, default, distinct
+   - GripperHWState: all variants, default, distinct
+   - GripperAction: all variants, distinct
+   - GripperConfigGR: validate, negative/max PWM, channel bounds, thrust loss, release > grab, validate
+   - MavlinkGripperCmd: release, grab, equality
+   - GripperHW: new, initialize, extreme PWM, process_grab/release, action_grab/release, mavlink_cmd, rc_input, thrust_loss, auto_release, servo_output, statustext, clear_statustext, gripper_type, channels, current_thrust, 100 cycles, clone, default, with_config, thrust_loss_detected
+
+5. **frame_executor** (40 tests)
+   - MissionCmd: all variants, distinctness
+   - ItemState: all variants, distinctness
+   - StepResult: all variants, distinctness
+   - FrameConfig: default, zero period, max period, clone
+   - NavDelayFE: relative, absolute, tick elapsed, zero/negative dt, 1000 ticks, reset, absolute flag, seq, elapsed_s, u16::MAX, f64::MAX, past target, negative delay
+   - FrameExecutor: new empty, tick no waypoints, set_waypoints_tick, 1000 ticks, reset_delay, current_seq, current_state, takeoff_complete, delay_elapsed, min_hold_ms, output_in_bounds, max_deviation, frame_period, set_delay, mission_complete (with/without takeoff), multi_cmds
+
+### Fixes applied
+- Removed serialization tests for types lacking `Serialize`/`Deserialize` derives
+- Fixed CrsfRcFrame channel array size (18, not 16)
+- Fixed WaypointTerrainCheck struct to include `safe` field
+- Fixed TerrainDBTA usage (Box<dyn Trait>, not &mut dyn Trait)
+- Fixed GripperHWState variants (Neutral/Grabbed/Released, not Neutral/Grabbing/Released)
+- Fixed GripperHWType variants (Servo/Epm, not Default/Epm)
+- Fixed GripperHW accessors (no on_thrust_loss() getter, use thrust_loss_detected())
+- Fixed frame_executor enum variants (NavWaypoint/NavLoiter/..., not Takeoff)
+- Fixed MotorRpmData fields (motor_0/1/2/3, not rpms vec)
+- Fixed TakeoffRpmController methods (esc_telemetry_enabled, not esoteric_telemetry_enabled)
+
+### Build results
+- **Passed**: 7552
+- **Failed**: 274 (20 new bugs exposed)
+- **Ignored**: 1
+
+---
+
 ## Campaign Summary (All 12 Waves)
 
 | Wave | Beads | Modules | New Tests | Final Passed | Final Failed |
@@ -821,8 +883,9 @@ These 5 failures represent real implementation gaps worth investigating.
 | 11 | 6 | 6 | 211 | 7054 | 240 |
 | 12 | 7 | 7 | 130 | 7169 | 245 |
 | 13 | 5 | 5 | 219 | 7361 | 254 |
+| 14 | 5 | 5 | 206 | 7552 | 274 |
 
-**Total**: ~105 modules attacked, ~4,871 adversarial tests added, 7361 passing, 254 known failures
+**Total**: ~110 modules attacked, ~5,077 adversarial tests added, 7552 passing, 274 known failures
 
 **Critical bugs exposed**:
 - BatteryStatus.remaining_pct accepts negative values
@@ -831,5 +894,5 @@ These 5 failures represent real implementation gaps worth investigating.
 - Parachute RC3pos flow missing update() call
 - Multiple state machine timing issues in engine_fail
 
-**Remaining unprotected modules**: ~26 modules (see remaining tasks T740-T769)
+**Remaining unprotected modules**: ~21 modules (see remaining tasks T740-T769)
 
