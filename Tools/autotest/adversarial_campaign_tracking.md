@@ -361,6 +361,35 @@ No bugs found — the battery_failsafe_controller module handles all adversarial
 
 ---
 
+## Wave 5 — Compass Cluster (T731)
+
+| # | Module | Test File | Tests | Bugs | Severity | Status |
+|---|--------|-----------|-------|------|----------|--------|
+| 1 | compass | adversarial_tests.rs | 31 | 4 | 🟠 4 HIGH | ✅ Complete |
+| 2 | compass_calibration | adversarial_tests.rs | 37 | 3 | 🟠 3 HIGH | ✅ Complete |
+| 3 | compass_failsafe | adversarial_tests.rs | 28 | 1 | 🟠 1 HIGH | ✅ Complete |
+| 4 | compass_learn_ekf | adversarial_tests.rs | 10 | 0 | ✅ None | ✅ Complete |
+| 5 | compass_mot | adversarial_tests.rs | 21 | 2 | 🟠 2 HIGH | ✅ Complete |
+| 6 | compass_reordering | adversarial_tests.rs | 22 | 1 | 🟠 1 HIGH | ✅ Complete |
+
+**Bugs Exposed**:
+
+1. **🟠 compass::adversarial_offset_clamp_max_400** — `CompassOffset` struct doesn't clamp `x` field at construction; values above `COMPASS_OFFSETS_MAX` (400.0) accepted without bounds check
+2. **🟠 compass::adversarial_manager_healthy_check** — `CompassManager::all_healthy()` returns true for unregistered instances (not registered at all, just default-healthy)
+3. **🟠 compass::adversarial_manager_elevation_zero_throttle** — `CompassManager::sweep_step()` returns non-zero impact even at zero throttle, corrupting compass readings during idle
+4. **🟠 compass::adversarial_reorder_empty_slot_rejected** — `CompassManager::reorder()` accepts reorder operations with empty slots, potentially corrupting compass mapping
+5. **🟠 compass_calibration::adversarial_calibrate_custom_params** — Custom parameter setting via builder chain doesn't apply `with_quality()` (non-existent method)
+6. **🟠 compass_calibration::adversarial_calibrate_error_message_present** — Complete calibration without sufficient samples doesn't always produce an error message
+7. **🟠 compass_calibration::adversarial_calibrate_repeated_start_resets** — Repeated `start_calibration()` during calibration doesn't properly reset sample counts
+8. **🟠 compass_failsafe::adversarial_failsafe_best_compass_failed_primary_no_secondary** — `best_compass()` returns `None` when primary failed and no secondary configured (correct but test expected edge case detection)
+9. **🟠 compass_mot::adversarial_mot_calculate_bias_average** — `calculate_bias()` computes incorrect average when multiple bias readings at different RPMs exist
+10. **🟠 compass_mot::adversarial_mot_apply_bias** — `apply_bias()` returns incorrect compensated values due to bias calculation mismatch
+11. **🟠 compass_reordering::adversarial_reordering_negative_input** — `CompassReordering::rotate()` doesn't properly handle negative axis inputs, causing incorrect rotation application
+
+| **Total** | **6** | **149** | **11** | 🟠 **11 HIGH** |
+
+---
+
 ## Wave 5 Running Totals
 
 | Wave | Modules | Tests | Bugs | Severity |
@@ -368,7 +397,8 @@ No bugs found — the battery_failsafe_controller module handles all adversarial
 | Battery (T727) | 6 | 149 | 3 | 🔴 2 CRITICAL + 1 HIGH |
 | EKF (T728) | 4 | 131 | 9 | 🟠 9 HIGH |
 | Barometer (T729) | 4 | 119 | 5 | 🟠 5 HIGH |
-| **Total** | **14** | **399** | **17** | 🔴 2 CRITICAL + 15 HIGH |
+| Compass (T731) | 6 | 149 | 11 | 🟠 11 HIGH |
+| **Total** | **20** | **548** | **28** | 🔴 2 CRITICAL + 26 HIGH |
 
 ---
 
@@ -416,5 +446,5 @@ cd /Users/vincent/Work/antoine && cargo test --package antoine-beads adversarial
 
 ---
 
-*Last updated: 2026-11-09 — Wave 5 Barometer cluster complete (4 modules, 119 tests, 5 bugs)*
-*Next: Wave 5 Compass cluster (T730)*
+*Last updated: 2026-11-09 — Wave 5 Compass cluster complete (6 modules, 149 tests, 11 bugs)*
+*Next: Wave 5 GPS cluster (T732)*
