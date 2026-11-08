@@ -901,8 +901,9 @@ These 5 failures represent real implementation gaps worth investigating.
 | 30 | 1 | 1 | 40 | 8342 | 333 |
 | 31 | 1 | 1 | 46 | 8388 | 333 |
 | 32 | 1 | 1 | 60 | 8448 | 333 |
+| 33 | 1 | 1 | 67 | 8515 | 333 |
 
-**Total**: ~131 modules attacked, ~6,032 adversarial tests added, 8448 passing, 333 known failures
+**Total**: ~132 modules attacked, ~6,099 adversarial tests added, 8515 passing, 333 known failures
 
 **Critical bugs exposed**:
 - BatteryStatus.remaining_pct accepts negative values
@@ -912,6 +913,9 @@ These 5 failures represent real implementation gaps worth investigating.
 - Multiple state machine timing issues in engine_fail
 - **rover_rangefinder**: signum(0.0f32) = 1.0 causes max steering for straight-ahead obstacles (IEEE 754 compliance)
 - **rover_rangefinder**: default num_rangefinders=1 limits multi-angle obstacle scanning
+- **ground_effect_compensation**: takeoff/touchdown hold duration only disables ground effect when above max_effect_altitude; within zone, stays ON forever
+- **ground_effect_compensation**: NAN.max(0.0) = NAN in Rust (not 0.0), NaN altitude bypasses ground effect
+- **ground_effect_compensation**: ground_effect_multiplier > 1.0 or < 0.0 accepted without validation
 
 **Remaining unprotected modules**: ~7 modules (see remaining tasks T740-T769)
 
