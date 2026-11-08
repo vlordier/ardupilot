@@ -892,8 +892,9 @@ These 5 failures represent real implementation gaps worth investigating.
 | 21 | 1 | 1 | 42 | 7963 | 324 |
 | 22 | 1 | 1 | 51 | 7995 | 329 |
 | 23 | 1 | 1 | 40 | 8035 | 329 |
+| 24 | 1 | 1 | 35 | 8087 | 332 |
 
-**Total**: ~122 modules attacked, ~5,603 adversarial tests added, 8035 passing, 329 known failures
+**Total**: ~123 modules attacked, ~5,638 adversarial tests added, 8087 passing, 332 known failures
 
 **Critical bugs exposed**:
 - BatteryStatus.remaining_pct accepts negative values
@@ -902,5 +903,5 @@ These 5 failures represent real implementation gaps worth investigating.
 - Parachute RC3pos flow missing update() call
 - Multiple state machine timing issues in engine_fail
 
-**Remaining unprotected modules**: ~9 modules (see remaining tasks T740-T769)
+**Remaining unprotected modules**: ~8 modules (see remaining tasks T740-T769)
 
