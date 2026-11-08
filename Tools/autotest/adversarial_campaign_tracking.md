@@ -613,3 +613,26 @@ cd /Users/vincent/Work/antoine && cargo test --package antoine-beads adversarial
 **Quarantined**: 50+ agent-generated adversarial test files (API drift between agent generation and current module signatures)
 
 **Remaining**: None — all T725-T745 subtasks completed.
+
+---
+
+## Wave 7 (T746): EKF Check / Source / Variance / IMU Extra / Fence Geometry
+
+| Bead | Module | Tests | Build Impact |
+|------|--------|-------|-------------|
+| T746a | `ekf_check` | 96 | GpsSensorHealth, ExternalAhrsHealth, lane switching, dead reckoning |
+| T746b | `ekf_source` | 48 | EkfSourceHandler, source set availability enforcement |
+| T746c | `ekf_var` | 53 | EKFVarianceMonitor, per-core variance, innovation SP gate |
+| T746d | `ekf_imu_extra` | 23 | Ekf3NoGpsLeakEI, GPS leak prevention |
+| T746e | `fence_geometry` | 55 | CircleFence, PolygonFence, FenceEnforcer, breach status |
+
+**Wave 7 subtotal: 5 tasks, 275 new tests**
+
+**Build state after Wave 7**: 6419 passed; 146 failed; 1 ignored
+
+**Notable behaviors tested**:
+- EKF3 position leak prevention when GPS not configured as XY source
+- Chi-sq innovation gate threshold effects on health status
+- Fence geometry boundary distance calculations
+- Polygon ray-casting with degenerate polygons (<3 vertices)
+- Clone independence for all stateful structures
