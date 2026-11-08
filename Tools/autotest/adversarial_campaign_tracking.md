@@ -900,8 +900,9 @@ These 5 failures represent real implementation gaps worth investigating.
 | 29 | 1 | 1 | 40 | 8302 | 333 |
 | 30 | 1 | 1 | 40 | 8342 | 333 |
 | 31 | 1 | 1 | 46 | 8388 | 333 |
+| 32 | 1 | 1 | 60 | 8448 | 333 |
 
-**Total**: ~130 modules attacked, ~5,972 adversarial tests added, 8388 passing, 333 known failures
+**Total**: ~131 modules attacked, ~6,032 adversarial tests added, 8448 passing, 333 known failures
 
 **Critical bugs exposed**:
 - BatteryStatus.remaining_pct accepts negative values
@@ -909,6 +910,8 @@ These 5 failures represent real implementation gaps worth investigating.
 - check_arms_for_alt_hold stale cache bug
 - Parachute RC3pos flow missing update() call
 - Multiple state machine timing issues in engine_fail
+- **rover_rangefinder**: signum(0.0f32) = 1.0 causes max steering for straight-ahead obstacles (IEEE 754 compliance)
+- **rover_rangefinder**: default num_rangefinders=1 limits multi-angle obstacle scanning
 
 **Remaining unprotected modules**: ~7 modules (see remaining tasks T740-T769)
 
