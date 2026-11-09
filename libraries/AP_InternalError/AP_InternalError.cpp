@@ -15,12 +15,14 @@ extern const AP_HAL::HAL &hal;
 static AP_InternalError instance;
 
 void AP_InternalError::error(const AP_InternalError::error_t e, uint16_t line) {
-#if CONFIG_HAL_BOARD == HAL_BOARD_SITL && defined(HAL_DEBUG_BUILD)
+#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
     switch (e) {
     case AP_InternalError::error_t::watchdog_reset:
     case AP_InternalError::error_t::main_loop_stuck:
     case AP_InternalError::error_t::params_restored:
-        // don't panic on these to facilitate watchdog testing
+    case AP_InternalError::error_t::flow_of_control:
+        // don't panic on these in SITL - they often indicate expected
+        // uninitialized state in simulation (e.g. pos control not yet started)
         break;
     default:
         char buffer[50];

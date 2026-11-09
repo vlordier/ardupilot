@@ -11,6 +11,8 @@
 #include <AP_CSVReader/AP_CSVReader.h>
 #include <AP_HAL/utility/DataRateLimit.h>
 
+#include <netinet/in.h>
+
 #include <SITL/SIM_SerialDevice.h>
 
 class HALSITL::UARTDriver : public AP_HAL::UARTDriver {
@@ -96,6 +98,7 @@ private:
     bool _wasm = false;
 #endif
     int _listen_fd;  // socket we are listening on
+    struct sockaddr_in _listen_sockaddr;  // listen socket address for reconnection
     int _serial_port;
     static bool _console;
     ByteBuffer _readbuffer{16384};
@@ -113,6 +116,9 @@ private:
 
     void _tcp_start_connection(uint16_t port, bool wait_for_connection);
     void _unix_start_connection(const char *path, bool wait_for_connection);
+    void _check_for_tcp_connection(void);
+public:
+    void check_tcp_connection(void);
     void _uart_start_connection(void);
     void _check_reconnect();
     void _tcp_start_client(const char *address, uint16_t port);

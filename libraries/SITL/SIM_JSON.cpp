@@ -91,6 +91,13 @@ void JSON::set_interface_ports(const char* address, const int port_in, const int
     sock.set_blocking(false);
     sock.reuseaddress();
 
+    // Bind for receiving sensor data from FDM
+    if (!sock.bind("0.0.0.0", port_in)) {
+        printf("SIM_JSON: FAILED to bind to port %d for sensor input\n", port_in);
+    } else {
+        printf("SIM_JSON: bound to port %d for sensor input\n", port_in);
+    }
+
     if (strcmp("127.0.0.1",address) != 0) {
         target_ip = address;
     }

@@ -160,3 +160,47 @@ for reviewing patches on their specific area.
   - ***Subsystem***: ESP32,AP_HAL_ESP32
 - [Charles Villard](https://github.com/Silvanosky):
   - ***Subsystem***: ESP32,AP_HAL_ESP32
+
+---
+
+## Antoine Fork Modifications
+
+This is a fork of ArduPilot with Antoine-specific modifications for SITL simulation and MAVLink integration.
+
+### Purpose
+
+Bridge ArduPilot SITL simulation to the Antoine ecosystem via MAVLink↔NATS transport, enabling automated test scenarios and real-time telemetry/controls integration.
+
+### Key Modifications
+
+| Area | Changes |
+|---|---|
+| **SITL UART Driver** | Non-blocking TCP on SERIAL0 (`tcp:0` instead of `tcp:0:wait`), async connection polling via `check_tcp_connection()`, `_listen_sockaddr` promoted to member variable for reconnection support |
+| **JSON Sim Backend** | Socket binds to `port_in` for receiving sensor data from FDM, `SITL_JSON_DEBUG` enabled by default |
+| **Mode Guided** | Skip terrain-data INTERNAL_ERROR in SITL (terrain data unavailable in JSON/SIM mode) |
+| **Internal Error** | Relaxed SITL panic: `flow_of_control` no longer triggers abort during expected uninitialized simulation state |
+| **Motors** | Pass arming checks without motor init in simulation |
+| **FWVersion** | Removed `PACKED` attribute from `AP_FWVersion` class |
+| **gsoap submodule** | Contains local dirty modifications |
+
+### Antoine Bridge
+
+- **Tool**: `Tools/autotest/antoine_bridge.py` — AutoTest entry for Antoine through the MAVLink-to-NATS bridge
+- **Usage**: Run Antoine's focused MAVLink bridge acceptance scenarios without starting ArduCopter SITL directly
+
+### Build Instructions
+
+```sh
+# Configure for SITL
+./waf configure --board sitl
+
+# Build copter
+./waf copter
+
+# Run autotest with Antoine bridge
+Tools/autotest/autotest.py build.Copter test.Copter.AntoineBridge
+```
+
+### Branch
+
+Development occurs on `antoine-bridge-test` (based on upstream master).

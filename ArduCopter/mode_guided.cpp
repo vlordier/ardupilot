@@ -217,8 +217,12 @@ void ModeGuided::wp_control_start()
     Vector3p stopping_point_ned_m;
     wp_nav->get_wp_stopping_point_NED_m(stopping_point_ned_m);
     if (!wp_nav->set_wp_destination_NED_m(stopping_point_ned_m, false)) {
+#if CONFIG_HAL_BOARD == HAL_BOARD_SITL
+        // In SITL JSON mode, terrain data is not available; skip waypoint init
+#else
         // this should never happen because terrain data is not used
         INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control);
+#endif
     }
 
     // initialise yaw

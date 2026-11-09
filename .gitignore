@@ -1,7 +1,15 @@
-/.lock-waf*
-/.waf*
+# ============================================================
+# WAF build system
+# ============================================================
+.lock-waf*
+.waf*
+
+# ============================================================
+# Autotest generated files
+# ============================================================
 /Tools/autotest/aircraft/Rascal/reset.xml
 /Tools/autotest/ch7_mission.txt
+/Tools/autotest/rover-ch7_mission.txt
 /Tools/autotest/param_metadata/Parameters.html
 /Tools/autotest/param_metadata/Parameters.rst
 /Tools/autotest/param_metadata/ParametersLatex.rst
@@ -13,21 +21,25 @@
 /Tools/autotest/jsb_sim/rascal_test.xml
 /Tools/autotest/jsbsim_fgout_0.xml
 /Tools/autotest/jsbsim_start_0.xml
-/Tools/autotest/rover-ch7_mission.txt
-/tmp/*
-# Exclude all bins but allow font bins and bootloaders
+/Tools/autotest/logs/
+autotest_result_*_junit.xml
+
+# ============================================================
+# C/C++ build artifacts
+# ============================================================
+*.o
+*.d
+*.i
+*.ii
 *.bin
 !*_bl.bin
 !font*.bin
-*.d
 *.dfu
 *.dll
 *.elf
-*.exe
 *.generated.h
 *.hex
 *.lst
-*.o
 *.obj
 *.px4
 *.pyc
@@ -35,28 +47,84 @@
 *.tlog.raw
 *.vbrain
 *.vrx
+
+# ============================================================
+# Archives
+# ============================================================
 *.zip
 !Tools/autotest/tilecache/**/*.zip
+
+# ============================================================
+# Editor swap files
+# ============================================================
 *~
 .*.swo
 .*.swp
-*.i
-*.ii
+
+# ============================================================
+# OS files
+# ============================================================
 .DS_Store
-.autotools
-.built
-.context
+Thumbs.db
+
+# ============================================================
+# IDE files
+# ============================================================
 .cproject
 .pydevproject
-.depend
-.directory
-.metadata/
 .project
 .settings/
 .tags
 .tags_sorted_by_file
+.metadata/
 .vagrant
+
+# ============================================================
+# JetBrains IDE
+# ============================================================
+.idea/*
+
+# ============================================================
+# CMake
+# ============================================================
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+cmake-build-*/
+/reports/
+/GCOV_*.log
+
+# ============================================================
+# Make / Build
+# ============================================================
+Make.dep
+build
+build.tmp.binaries/
+mk/PX4/ROMFS/default.parm
+module.mk
+.built
+.autotools
+.context
+.depend
+.directory
+
+# ============================================================
+# Git tooling
+# ============================================================
+GPATH
+GRTAGS
+GTAGS
+tags
+.history
+
+# ============================================================
+# Vagrant
+# ============================================================
 Tools/vagrant/*.log
+
+# ============================================================
+# Test directories
+# ============================================================
 Rover/test.Rover/
 Rover/way.txt
 ArduCopter/Debug/
@@ -69,28 +137,17 @@ ArduCopter/way.txt
 ArduPlane/test.ArduPlane/
 ArduPlane/test/*
 ArduPlane/way.txt
+test.ArduCopter/*
 Build.Rover/*
 Build.AntennaTracker/*
 Build.ArduCopter/*
 Build.ArduPlane/*
 Build.ArduSub/*
-CMakeCache.txt
-CMakeFiles
-LASTLOG.TXT
-Make.dep
-Thumbs.db
 autotest.lck
-build
-launch-settings.json
-/renode/
-cmake_install.cmake
-cscope.in.out
-cscope.out
-cscope.po.out
-dataflash.bin
-eeprom.bin
-index.html
-logs/
+
+# ============================================================
+# MAVLink / telemetry
+# ============================================================
 mav.log
 mav.log.raw
 mav.parm
@@ -102,24 +159,107 @@ mission.stg
 /ArduSub/defaults.parm
 /Blimp/defaults.parm
 /Rover/defaults.parm
-mk/PX4/ROMFS/default.parm
-module.mk
-serialsent.raw
-status.txt
-tags
-terrain/
-test.ArduCopter/*
-GPATH
-GRTAGS
-GTAGS
+
+# ============================================================
+# Firmware / data
+# ============================================================
+dataflash.bin
+eeprom.bin
 *.apj
-.gdbinit
+persistent.dat
+terrain/
+
+# ============================================================
+# Debug / crash dumps
+# ============================================================
+segv_*out
+dumpstack*out
+dumpcore*out
+/core
+/core.*
+
+# ============================================================
+# Logs
+# ============================================================
+logs/
+launch-settings.json
+status.txt
+serialsent.raw
+index.html
+
+# ============================================================
+# Scripts / REPL (local scratch)
+# ============================================================
+/scripts/
+/repl/
+/Rover/scripts/
+/Rover/repl/
+/AntennaTracker/scripts/
+/AntennaTracker/repl/
+/ArduCopter/scripts/
+/ArduCopter/repl/
+/ArduPlane/scripts/
+/ArduPlane/repl/
+/ArduSub/scripts/
+/ArduSub/repl/
+
+# ============================================================
+# Renode
+# ============================================================
+/renode/
+
+# ============================================================
+# ESP-IDF modules
+# ============================================================
+modules/esp_idf
+
+# ============================================================
+# Lua language server
+# ============================================================
+ScriptingDocs.md
+/lua-language-server/
+repo-LuaLS-lua-language-server.cache
+
+# ============================================================
+# Python virtual environments
+# ============================================================
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+python-version
+
+# ============================================================
+# Python caches
+# ============================================================
+__pycache__/
+.ruff_cache/
+.mypy_cache/
+
+# ============================================================
+# VSCode
+# ============================================================
 .vscode/*
 !.vscode/extensions.json
 !.vscode/usb-debug.code-workspace
 !.vscode/usb-debug-wsl.code-workspace
+
+# ============================================================
+# Local cache
+# ============================================================
 .cache/
-/.history
+
+# ============================================================
+# Task lists
+# ============================================================
+tasklist.json
+
+# ============================================================
+# Parameter files (generated)
+# ============================================================
 Parameters.html
 Parameters.md
 Parameters.rst
@@ -133,48 +273,3 @@ LogMessages.html
 LogMessages.rst
 LogMessages.xml
 LogMessages.md
-# JetBrains IDE files
-.idea/*
-# CMake
-cmake-build-*/
-/reports/
-/GCOV_*.log
-way.txt
-*.wbproj
-*.wbproj
-segv_*out
-/scripts/
-/repl/
-/Rover/scripts/
-/Rover/repl/
-/AntennaTracker/scripts/
-/AntennaTracker/repl/
-/ArduCopter/scripts/
-/ArduCopter/repl/
-/ArduPlane/scripts/
-/ArduPlane/repl/
-/ArduSub/scripts/
-/ArduSub/repl/
-persistent.dat
-dumpstack*out
-dumpcore*out
-build.tmp.binaries/
-tasklist.json
-modules/esp_idf
-
-# lua-language-server linter
-ScriptingDocs.md
-/lua-language-server/
-repo-LuaLS-lua-language-server.cache
-
-# Ignore Python virtual environments
-#   from: https://github.com/github/gitignore/blob/4488915eec0b3a45b5c63ead28f286819c0917de/Python.gitignore#L125
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-autotest_result_*_junit.xml
-.python-version

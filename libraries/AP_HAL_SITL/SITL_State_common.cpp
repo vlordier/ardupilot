@@ -21,6 +21,8 @@
 #include <AP_HAL/utility/Socket_native.h>
 #include "SITL_State_common.h"
 
+extern const AP_HAL::HAL& hal;
+
 #include <SITL/SIM_RF_Ainstein_LR_D1.h>
 #include <SITL/SIM_RF_Ainstein_LR_D1_v19.h>
 #include <SITL/SIM_RF_Benewake_TF02.h>
@@ -408,6 +410,13 @@ void SITL_State_Common::create_net_serial_sim(const char *spec)
  */
 void SITL_State_Common::sim_update(void)
 {
+    // Non-blocking TCP connection poll on SERIAL0
+    {
+        HALSITL::UARTDriver *uart = (HALSITL::UARTDriver*)hal.serial(0);
+        if (uart != nullptr) {
+            uart->check_tcp_connection();
+        }
+    }
 #if AP_SIM_SERIALDEVICE_NETWORK_ENABLED
     // move data between the autopilot and any device attached via TCP;
     // for serially-attached devices the SITL UART driver does this:

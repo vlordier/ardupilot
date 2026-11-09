@@ -21,7 +21,7 @@
 #include <AP_HAL/utility/Socket.h>
 #include "SIM_Aircraft.h"
 
-#define SITL_JSON_DEBUG 0
+#define SITL_JSON_DEBUG 1
 
 namespace SITL {
 

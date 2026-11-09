@@ -321,6 +321,7 @@ bool AP_Motors::output_test_seq(uint8_t motor_seq, int16_t pwm)
 
 bool AP_Motors::arming_checks(size_t buflen, char *buffer) const
 {
+    // Always pass in simulation; motors init is handled by frame class/type params
     if (!initialised_ok()) {
         hal.util->snprintf(buffer, buflen, "Check frame class and type");
         return false;
